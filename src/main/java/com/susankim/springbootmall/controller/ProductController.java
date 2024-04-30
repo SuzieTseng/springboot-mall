@@ -6,13 +6,17 @@ import com.susankim.springbootmall.dto.ProductRequest;
 import com.susankim.springbootmall.model.Product;
 import com.susankim.springbootmall.service.ProductService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 public class ProductController {
 
@@ -21,14 +25,24 @@ public class ProductController {
 
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(ProductCategory category, String search,
-                                                     @RequestParam(defaultValue = "created_date") String order,
-                                                     @RequestParam(defaultValue = "desc") String sort) {
+    public ResponseEntity<List<Product>> getProducts(
+            // Filtering
+            ProductCategory category,
+            String search,
+            // Sorting
+            @RequestParam(defaultValue = "created_date") String order,
+            @RequestParam(defaultValue = "desc") String sort,
+            // Pagination
+            @RequestParam(defaultValue = "4") @Max(48) @Min(1) Integer numPerPage,
+            @RequestParam(defaultValue = "1") @Min(1) Integer page
+             ) {
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);
         productQueryParams.setOrder(order);
         productQueryParams.setSort(sort);
+        productQueryParams.setNumPerPage(numPerPage);
+        productQueryParams.setPage(page);
 
         List<Product> productList = productService.getProducts(productQueryParams);
 

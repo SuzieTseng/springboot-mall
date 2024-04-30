@@ -7,6 +7,24 @@ public class ProductQueryParams {
     private String search;
     private String order;
     private String sort;
+    private Integer numPerPage;
+    private Integer page;
+
+    public Integer getNumPerPage() {
+        return numPerPage;
+    }
+
+    public void setNumPerPage(Integer numPerPage) {
+        this.numPerPage = numPerPage;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
 
     public ProductCategory getCategory() {
         return category;

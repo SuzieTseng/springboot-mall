@@ -31,6 +31,7 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
+        // Filtering
         ProductCategory category = productQueryParams.getCategory();
         String search = productQueryParams.getSearch();
 
@@ -44,10 +45,21 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + search + "%");
         }
 
+        // Sorting
         String order = productQueryParams.getOrder();
         String sort = productQueryParams.getSort();
 
         sql += " ORDER BY " + order + " " + sort;
+
+        // Pagination
+        sql += " LIMIT :limit OFFSET :offset";
+
+        Integer page = productQueryParams.getPage();
+        Integer numPerPage = productQueryParams.getNumPerPage();
+
+        map.put("limit", numPerPage);
+        map.put("offset", (page-1)*numPerPage);
+
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
