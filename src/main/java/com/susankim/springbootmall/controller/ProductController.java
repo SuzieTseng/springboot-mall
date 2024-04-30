@@ -1,6 +1,7 @@
 package com.susankim.springbootmall.controller;
 
 import com.susankim.springbootmall.constant.ProductCategory;
+import com.susankim.springbootmall.dto.Page;
 import com.susankim.springbootmall.dto.ProductQueryParams;
 import com.susankim.springbootmall.dto.ProductRequest;
 import com.susankim.springbootmall.model.Product;
@@ -25,7 +26,7 @@ public class ProductController {
 
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             // Filtering
             ProductCategory category,
             String search,
@@ -44,10 +45,21 @@ public class ProductController {
         productQueryParams.setNumPerPage(numPerPage);
         productQueryParams.setPage(page);
 
+        // Obtain product list
         List<Product> productList = productService.getProducts(productQueryParams);
 
+        // Obtain product total number
+        Integer total = productService.productCount(productQueryParams);
+
+        // Pagination
+        Page<Product> productPage = new Page<>();
+        productPage.setNumPerPage(numPerPage);
+        productPage.setPage(page);
+        productPage.setTotal(total);
+        productPage.setResult(productList);
+
 //        return ResponseEntity.status(HttpStatus.OK).body(productList);
-        return ResponseEntity.ok(productList);
+        return ResponseEntity.ok(productPage);
     }
 
     @GetMapping("/products/{productId}")
