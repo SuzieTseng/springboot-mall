@@ -1,9 +1,7 @@
 package com.susankim.springbootmall.dao;
 
 import com.susankim.springbootmall.dto.UserRegisterRequest;
-import com.susankim.springbootmall.model.Product;
 import com.susankim.springbootmall.model.User;
-import com.susankim.springbootmall.rowmapper.ProductRowMapper;
 import com.susankim.springbootmall.rowmapper.UserRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
