@@ -30,18 +30,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // Filtering
-        ProductCategory category = productQueryParams.getCategory();
-        String search = productQueryParams.getSearch();
-
-        if (category != null) {
-            sql += " AND category = :category";
-            map.put("category", category.name());
-        }
-
-        if (search != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
@@ -57,18 +46,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // Filtering
-        ProductCategory category = productQueryParams.getCategory();
-        String search = productQueryParams.getSearch();
-
-        if (category != null) {
-            sql += " AND category = :category";
-            map.put("category", category.name());
-        }
-
-        if (search != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + search + "%");
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // Sorting
         String order = productQueryParams.getOrder();
@@ -171,7 +149,22 @@ public class ProductDaoImpl implements ProductDao {
         namedParameterJdbcTemplate.update(sql, map);
     }
 
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+        ProductCategory category = productQueryParams.getCategory();
+        String search = productQueryParams.getSearch();
 
+        if (category != null) {
+            sql += " AND category = :category";
+            map.put("category", category.name());
+        }
+
+        if (search != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search", "%" + search + "%");
+        }
+
+        return sql;
+    }
 
 
 }
