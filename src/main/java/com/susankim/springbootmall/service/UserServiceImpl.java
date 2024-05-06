@@ -3,12 +3,14 @@ package com.susankim.springbootmall.service;
 import com.susankim.springbootmall.dao.UserDao;
 import com.susankim.springbootmall.dto.UserRegisterRequest;
 import com.susankim.springbootmall.model.User;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -27,6 +29,12 @@ public class UserServiceImpl implements UserService {
             log.warn("{} has been registered", user.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } else {
+
+            // Hash password using SHA-384
+            String hashedPassword = DigestUtils.sha384Hex(userRegisterRequest.getPassword());
+            userRegisterRequest.setPassword(hashedPassword);
+//            System.out.println(hashedPassword.length());
+
             return userDao.createUser(userRegisterRequest);
         }
 
@@ -40,14 +48,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(UserRegisterRequest userRegisterRequest) {
         User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
+
         if (user == null) {
             log.warn("{} has not been registered", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (!user.getPassword().equals(userRegisterRequest.getPassword())) {
+
+        // Verify hashed password
+        String hashedPassword = DigestUtils.sha384Hex(userRegisterRequest.getPassword());
+        if (!user.getPassword().equals(hashedPassword)) {
             log.warn("{} entered wrong password", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
         return user;
     }
 }
