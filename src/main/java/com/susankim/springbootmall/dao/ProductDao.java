@@ -19,4 +19,6 @@ public interface ProductDao {
     void deleteProductById(Integer productId);
 
     Integer productCount(ProductQueryParams productQueryParams);
+
+    void updateStock(Integer productId, Integer newStock);
 }
