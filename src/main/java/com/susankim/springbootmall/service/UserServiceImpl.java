@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } else {
 
-            // Hash password using SHA-384
-            String hashedPassword = DigestUtils.sha384Hex(userRegisterRequest.getPassword());
+            // Hash password using SHA-256
+            String hashedPassword = DigestUtils.sha256Hex(userRegisterRequest.getPassword());
             userRegisterRequest.setPassword(hashedPassword);
 //            System.out.println(hashedPassword.length());
 
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Verify hashed password
-        String hashedPassword = DigestUtils.sha384Hex(userRegisterRequest.getPassword());
+        String hashedPassword = DigestUtils.sha256Hex(userRegisterRequest.getPassword());
         if (!user.getPassword().equals(hashedPassword)) {
             log.warn("{} entered wrong password", userRegisterRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
